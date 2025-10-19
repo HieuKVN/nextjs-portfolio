@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import Image from 'next/image';
 
 export default function Home() {
   return (
@@ -13,9 +12,9 @@ export default function Home() {
       <div className="container">
         <header className="profile">
           <div className="profile-image">
-            <Image
-              src="/hieuk.png"
-              alt="HieuK Profile Picture"
+            <img
+              src="/profile-placeholder.png"
+              alt="Profile Picture"
               className="profile-pic"
               width={160}
               height={160}

@@ -169,15 +169,28 @@ function colorOf(title: string): string {
 
 export async function GET() {
   try {
-    // Validate ICS file exists
-    const icsPath = path.join(process.cwd(), 'public', '2025-2026.1.ics');
-    if (!fs.existsSync(icsPath)) {
-      return NextResponse.json({ error: 'Schedule file not found' }, { status: 404 });
+    // Check for any ICS files in public directory
+    const publicDir = path.join(process.cwd(), 'public');
+    const files = fs.readdirSync(publicDir);
+    const icsFiles = files.filter(file => file.endsWith('.ics'));
+
+    if (icsFiles.length === 0) {
+      return NextResponse.json({
+        error: 'No schedule file found',
+        message: 'Please add your university ICS schedule file to the public/ directory',
+        setup_instructions: 'Download your schedule from your university portal and rename it to match the expected format.'
+      }, { status: 404 });
     }
+
+    // Use the first ICS file found
+    const icsPath = path.join(publicDir, icsFiles[0]);
 
     const content = fs.readFileSync(icsPath, 'utf-8');
     if (!content.trim()) {
-      return NextResponse.json({ error: 'Schedule file is empty' }, { status: 422 });
+      return NextResponse.json({
+        error: 'Schedule file is empty',
+        message: 'The schedule file appears to be empty or corrupted'
+      }, { status: 422 });
     }
 
     const events = parseICSContent(content);

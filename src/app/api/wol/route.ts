@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Mock configuration (in a real app, this would come from a database)
+// Configuration from environment variables
 const CONFIG = {
-  secret_key: 'hashed_password_placeholder', // This would be hash('sha256', actual_password)
-  mac_address: '00:00:00:00:00:00', // Placeholder MAC address
-  ip_address: '192.168.1.255', // Broadcast IP
-  port: 9
+  secret_key: process.env.WOL_PASSWORD ? require('crypto').createHash('sha256').update(process.env.WOL_PASSWORD).digest('hex') : 'hashed_password_placeholder',
+  mac_address: process.env.WOL_MAC_ADDRESS || '00:00:00:00:00:00',
+  ip_address: process.env.WOL_IP_ADDRESS || '192.168.1.255',
+  port: parseInt(process.env.WOL_PORT || '9', 10)
 };
 
 // Wake-on-LAN function
