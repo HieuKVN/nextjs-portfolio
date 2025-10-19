@@ -1,13 +1,8 @@
 /* Reset */
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
-
-body {
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
 }
 
@@ -55,23 +50,45 @@ body {
   padding: 20px;
 }
 
-/* Simplified background effects */
+/* Background effects */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background: var(--bg-darker);
+  background: var(--gradient-accent);
+  opacity: 0.03;
   z-index: -1;
 }
 
-/* Simplified Animations */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+      circle at 0% 0%,
+      var(--accent-primary) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      var(--accent-secondary) 0%,
+      transparent 50%
+    );
+  opacity: 0.05;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Animations */
 @keyframes liquidFloat {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: brightness(1);
   }
   50% {
-    transform: translateY(-2px);
+    transform: translateY(-5px) scale(1.01);
+    filter: brightness(1.1);
   }
 }
 
@@ -94,7 +111,7 @@ body::before {
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
-  animation: liquidFloat 2s ease-in-out infinite;
+  animation: liquidFloat 6s ease-in-out infinite;
 }
 
 /* Common Input Styles */
@@ -111,7 +128,7 @@ button {
   font-size: 1rem;
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 input:focus,
@@ -128,7 +145,7 @@ button {
   letter-spacing: 1px;
   background: var(--glass-hover);
   border-color: var(--glass-border);
-  animation: liquidFloat 2s ease-in-out infinite;
+  animation: liquidFloat 6s ease-in-out infinite;
 }
 
 button:hover {
@@ -172,7 +189,7 @@ button:hover {
   border-radius: 50%;
   border: 4px solid var(--glass-bg);
   background: var(--bg-dark);
-  transition: transform 0.15s ease;
+  transition: transform 0.3s ease;
 }
 
 .profile-image:hover .profile-pic {
@@ -205,7 +222,7 @@ button:hover {
 .social-link {
   color: var(--text-primary);
   font-size: 1.5rem;
-  transition: all 0.15s ease;
+  transition: all 0.3s ease;
   width: 50px;
   height: 50px;
   display: flex;
@@ -229,7 +246,7 @@ button:hover {
   margin-bottom: 40px;
   opacity: 0;
   transform: translateY(20px);
-  animation: fadeInUp 0.3s ease forwards;
+  animation: fadeInUp 0.6s ease forwards;
 }
 
 .section:nth-child(2) {
@@ -260,7 +277,7 @@ button:hover {
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .content-card:hover {
@@ -282,7 +299,7 @@ button:hover {
   border-radius: 20px;
   font-size: 0.9rem;
   border: 1px solid var(--glass-border);
-  transition: all 0.15s ease;
+  transition: all 0.3s ease;
 }
 
 .skill-tag:hover {
@@ -304,7 +321,7 @@ button:hover {
   border-radius: 16px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  transition: all 0.15s ease;
+  transition: all 0.3s ease;
 }
 
 .goal-item:hover {
@@ -346,7 +363,7 @@ button:hover {
   border: 1px solid var(--glass-border);
   color: var(--text-primary);
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: all 0.3s ease;
 }
 
 .contact-item:hover {
@@ -378,10 +395,9 @@ footer {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   text-align: center;
-  animation: liquidFloat 2s ease-in-out infinite;
+  animation: liquidFloat 6s ease-in-out infinite;
   color: var(--text-primary);
 }
-
 /* Table Styles */
 table {
   width: 100%;
@@ -389,7 +405,7 @@ table {
   border-spacing: 4px;
   margin: 20px 0;
   font-size: 0.95rem;
-  animation: liquidFloat 2s ease-in-out infinite;
+  animation: liquidFloat 8s ease-in-out infinite;
   table-layout: fixed;
 }
 
@@ -401,7 +417,7 @@ td {
   border: 1px solid var(--glass-border);
   padding: 8px;
   text-align: center;
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 12px;
   width: calc(100% / 8); /* Equal width for all columns */
   vertical-align: middle;
@@ -432,12 +448,9 @@ td:hover {
 }
 
 .period {
-  width: 120px;
+  width: 80px;
   text-align: center;
   font-weight: 500;
-  padding: 8px 4px;
-  border-radius: 12px;
-  margin: 2px;
 }
 
 /* Event Card Styles */
@@ -448,9 +461,8 @@ td:hover {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   font-size: 0.9rem;
-  color: var(--text-primary);
 }
 
 .event:hover {
@@ -477,28 +489,28 @@ td:hover {
 .fade-in {
   opacity: 0;
   transform: translateY(20px);
-  animation: fadeInUp 0.3s ease forwards;
+  animation: fadeInUp 0.6s ease forwards;
 }
 
 .fade-in tr {
-  animation: fadeInUp 0.3s ease forwards;
+  animation: fadeInUp 0.6s ease forwards;
   animation-delay: 0.1s;
 }
 
 .fade-in tr:nth-child(2) {
-  animation-delay: 0.05s;
-}
-.fade-in tr:nth-child(3) {
-  animation-delay: 0.1s;
-}
-.fade-in tr:nth-child(4) {
-  animation-delay: 0.15s;
-}
-.fade-in tr:nth-child(5) {
   animation-delay: 0.2s;
 }
+.fade-in tr:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.fade-in tr:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.fade-in tr:nth-child(5) {
+  animation-delay: 0.5s;
+}
 .fade-in tr:nth-child(6) {
-  animation-delay: 0.25s;
+  animation-delay: 0.6s;
 }
 
 /* Container full width cho TKB */
@@ -525,126 +537,4 @@ td:hover {
   vertical-align: middle;
   height: 80px; /* cao vừa phải, đồng đều */
   line-height: 1.4;
-}
-
-/* Mobile responsiveness for TKB - Card-based layout */
-@media (max-width: 768px) {
-  .container.tkb.full {
-    padding: 15px;
-    margin: 20px auto;
-  }
-
-  /* Hide the table and show cards instead */
-  .container.tkb.full table {
-    display: none;
-  }
-
-  /* Create card-based mobile layout */
-  .mobile-tkb-cards {
-    display: block !important;
-  }
-
-  .mobile-tkb-cards .period-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    text-align: center;
-    font-weight: 600;
-  }
-
-  .mobile-tkb-cards .period-card .period-title {
-    font-size: 1.1rem;
-    margin-bottom: 4px;
-  }
-
-  .mobile-tkb-cards .period-card .period-time {
-    font-size: 0.9rem;
-    opacity: 0.9;
-  }
-
-  .mobile-tkb-cards .day-section {
-    margin-bottom: 20px;
-  }
-
-  .mobile-tkb-cards .day-header {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    color: var(--text-primary);
-    padding: 12px 15px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .mobile-tkb-cards .day-title {
-    font-size: 1.1rem;
-  }
-
-  .mobile-tkb-cards .day-date {
-    font-size: 0.9rem;
-    opacity: 0.8;
-    font-weight: 500;
-  }
-
-  .mobile-tkb-cards .day-events {
-    display: grid;
-    gap: 8px;
-  }
-
-  .mobile-tkb-cards .event-card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .mobile-tkb-cards .event-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  }
-
-  .mobile-tkb-cards .event-title {
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 4px;
-    color: var(--text-primary);
-  }
-
-  .mobile-tkb-cards .event-location {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    margin-bottom: 2px;
-  }
-
-  .mobile-tkb-cards .event-period {
-    font-size: 0.8rem;
-    color: var(--accent-secondary);
-    margin-bottom: 4px;
-    font-weight: 500;
-  }
-
-  .mobile-tkb-cards .event-time {
-    font-size: 0.8rem;
-    color: var(--accent-primary);
-    font-weight: 500;
-  }
-
-  .mobile-tkb-cards .no-events {
-    text-align: center;
-    color: var(--text-secondary);
-    font-style: italic;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 8px;
-  }
 }
