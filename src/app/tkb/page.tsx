@@ -1,13 +1,25 @@
 "use client";
 
-import Head from "next/head";
 import { useEffect, useState, useCallback } from "react";
+
+interface Event {
+  title: string;
+  start: string;
+  end: string;
+  loc: string;
+  period?: string;
+  periodTime?: string[];
+}
+
+interface PeriodData {
+  [dayKey: string]: Event[];
+}
 
 interface ScheduleData {
   weekStart: string;
   weekEnd: string;
   periods: { [key: number]: string[] };
-  periodEvents: { [key: string]: { [key: string]: any[] } };
+  periodEvents: { [key: string]: PeriodData };
   subjectColors: { [key: string]: string };
 }
 
@@ -23,14 +35,26 @@ export default function TKB() {
       const res = await fetch("/api/tkb");
 
       if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        // Try to get the detailed error message from the API response
+        try {
+          const errorData = await res.json();
+          throw new Error(
+            errorData.message ||
+              errorData.error ||
+              `HTTP ${res.status}: ${res.statusText}`
+          );
+        } catch (jsonError) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
       }
 
       const data = await res.json();
       setScheduleData(data);
     } catch (error) {
-    console.error('Error loading schedule:', error);
-    setError(error instanceof Error ? error.message : 'Failed to load schedule');
+      console.error("Error loading schedule:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to load schedule"
+      );
     } finally {
       setLoading(false);
     }
@@ -59,7 +83,7 @@ export default function TKB() {
   }, []);
 
   const formatEvent = useCallback(
-    (event: any, subjectColors: { [key: string]: string }) => {
+    (event: Event, subjectColors: { [key: string]: string }) => {
       const bg = subjectColors[event.title] || getFallbackColor(event.title);
       const title = event.title;
       const location = event.loc;
@@ -107,22 +131,26 @@ export default function TKB() {
   if (error) {
     return (
       <div className="container">
-        <div
-          style={{
-            textAlign: "center",
-            padding: "50px",
-            color: "var(--accent-primary)",
-          }}
-        >
-          <h3>Error loading schedule</h3>
-          <p>{error}</p>
-          <button
-            onClick={loadSchedule}
-            style={{ marginTop: "20px", padding: "10px 20px" }}
-          >
-            Try Again
-          </button>
-        </div>
+        <header className="profile">
+          <h1>Thời khoá biểu</h1>
+          <p className="subtitle">Weekly Schedule Viewer</p>
+        </header>
+
+        <main className="section">
+          <div className="content-card" style={{ textAlign: "center" }}>
+            <h3
+              style={{ color: "var(--accent-primary)", marginBottom: "20px" }}
+            >
+              📅 Schedule Not Configured
+            </h3>
+            <p style={{ marginBottom: "20px", lineHeight: "1.6" }}>{error}</p>
+            <div style={{ marginTop: "30px" }}>
+              <button onClick={loadSchedule} style={{ marginRight: "10px" }}>
+                🔄 Try Again
+              </button>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
@@ -145,159 +173,148 @@ export default function TKB() {
   const weekEndDate = new Date(weekEnd);
 
   return (
-    <>
-      <Head>
-        <title>
-          Thời khóa biểu - {weekStartDate.toLocaleDateString("vi-VN")} -{" "}
+    <div className="container tkb full">
+      <header className="profile">
+        <h1>Thời khoá biểu</h1>
+        <p className="subtitle">
+          {weekStartDate.toLocaleDateString("vi-VN")} –{" "}
           {weekEndDate.toLocaleDateString("vi-VN")}
-        </title>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </Head>
+        </p>
+      </header>
 
-      <div className="container tkb full">
-        <header className="profile">
-          <h1>Thời khoá biểu</h1>
-          <p className="subtitle">
-            {weekStartDate.toLocaleDateString("vi-VN")} –{" "}
-            {weekEndDate.toLocaleDateString("vi-VN")}
-          </p>
-        </header>
+      <main className="section">
+        <div className="content-card">
+          {/* Mobile card layout - organized by day */}
+          <div className="mobile-tkb-cards" style={{ display: "none" }}>
+            {labels.map((label, dayIndex) => {
+              const dayKey = (dayIndex + 1).toString();
+              const dayDate = new Date(weekStartDate);
+              dayDate.setDate(weekStartDate.getDate() + dayIndex);
 
-        <main className="section">
-          <div className="content-card">
-            {/* Mobile card layout - organized by day */}
-            <div className="mobile-tkb-cards" style={{ display: "none" }}>
-              {labels.map((label, dayIndex) => {
-                const dayKey = (dayIndex + 1).toString();
-                const dayDate = new Date(weekStartDate);
-                dayDate.setDate(weekStartDate.getDate() + dayIndex);
-
-                // Collect all events for this day across all periods
-                const dayAllEvents: any[] = [];
-                Object.entries(periodEvents).forEach(
-                  ([periodNum, periodData]) => {
-                    const periodDayEvents = (periodData as any)[dayKey] || [];
-                    periodDayEvents.forEach((event: any) => {
-                      dayAllEvents.push({
-                        ...event,
-                        period: periodNum,
-                        periodTime: periods[Number(periodNum)],
-                      });
+              // Collect all events for this day across all periods
+              const dayAllEvents: Event[] = [];
+              Object.entries(periodEvents).forEach(
+                ([periodNum, periodData]) => {
+                  const periodDayEvents = periodData[dayKey] || [];
+                  periodDayEvents.forEach((event: Event) => {
+                    dayAllEvents.push({
+                      ...event,
+                      period: periodNum,
+                      periodTime: periods[Number(periodNum)],
                     });
-                  }
-                );
+                  });
+                }
+              );
 
-                // Sort events by start time
-                dayAllEvents.sort(
-                  (a, b) =>
-                    new Date(a.start).getTime() - new Date(b.start).getTime()
-                );
+              // Sort events by start time
+              dayAllEvents.sort(
+                (a, b) =>
+                  new Date(a.start).getTime() - new Date(b.start).getTime()
+              );
 
-                return (
-                  <div key={dayIndex} className="day-section">
-                    <div className="day-header">
-                      <div className="day-title">{label}</div>
-                      <div className="day-date">
-                        {dayDate.toLocaleDateString("vi-VN", {
+              return (
+                <div key={dayIndex} className="day-section">
+                  <div className="day-header">
+                    <div className="day-title">{label}</div>
+                    <div className="day-date">
+                      {dayDate.toLocaleDateString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="day-events">
+                    {dayAllEvents.length > 0 ? (
+                      dayAllEvents.map((event) => (
+                        <div
+                          key={`${event.start}-${event.end}`}
+                          className="event-card"
+                          style={{
+                            borderLeft: `4px solid ${
+                              subjectColors[event.title] ||
+                              getFallbackColor(event.title)
+                            }`,
+                          }}
+                        >
+                          <div className="event-title">{event.title}</div>
+                          <div className="event-location">{event.loc}</div>
+                          <div className="event-period">
+                            Tiết {event.period} • {event.periodTime?.[0]}–
+                            {event.periodTime?.[1]}
+                          </div>
+                          <div className="event-time">
+                            {new Date(event.start).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}{" "}
+                            –{" "}
+                            {new Date(event.end).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="no-events">Không có lớp</div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop table layout */}
+          <table className="fade-in">
+            <thead>
+              <tr>
+                <th className="period">Tiết</th>
+                {labels.map((label, i) => {
+                  const date = new Date(weekStartDate);
+                  date.setDate(weekStartDate.getDate() + i);
+                  return (
+                    <th key={i}>
+                      {label}
+                      <br />
+                      <span className="small">
+                        {date.toLocaleDateString("vi-VN", {
                           day: "2-digit",
                           month: "2-digit",
                         })}
-                      </div>
-                    </div>
-
-                    <div className="day-events">
-                      {dayAllEvents.length > 0 ? (
-                        dayAllEvents.map((event) => (
-                          <div
-                            key={`${event.start}-${event.end}`}
-                            className="event-card"
-                            style={{
-                              borderLeft: `4px solid ${
-                                subjectColors[event.title] ||
-                                getFallbackColor(event.title)
-                              }`,
-                            }}
-                          >
-                            <div className="event-title">{event.title}</div>
-                            <div className="event-location">{event.loc}</div>
-                            <div className="event-period">
-                              Tiết {event.period} • {event.periodTime[0]}–
-                              {event.periodTime[1]}
-                            </div>
-                            <div className="event-time">
-                              {new Date(event.start).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}{" "}
-                              –{" "}
-                              {new Date(event.end).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="no-events">Không có lớp</div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Desktop table layout */}
-            <table className="fade-in">
-              <thead>
-                <tr>
-                  <th className="period">Tiết</th>
-                  {labels.map((label, i) => {
-                    const date = new Date(weekStartDate);
-                    date.setDate(weekStartDate.getDate() + i);
+                      </span>
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(periods).map(([periodNum, timeRange]) => (
+                <tr key={periodNum}>
+                  <td className="period">
+                    Tiết {periodNum}
+                    <br />
+                    <span className="small">
+                      {timeRange[0]}–{timeRange[1]}
+                    </span>
+                  </td>
+                  {Array.from({ length: 7 }, (_, dow) => {
+                    const dayKey = (dow + 1).toString();
+                    const events = periodEvents[periodNum]?.[dayKey] || [];
                     return (
-                      <th key={i}>
-                        {label}
-                        <br />
-                        <span className="small">
-                          {date.toLocaleDateString("vi-VN", {
-                            day: "2-digit",
-                            month: "2-digit",
-                          })}
-                        </span>
-                      </th>
+                      <td key={dow}>
+                        {events.map((event) =>
+                          formatEvent(event, subjectColors)
+                        )}
+                      </td>
                     );
                   })}
                 </tr>
-              </thead>
-              <tbody>
-                {Object.entries(periods).map(([periodNum, timeRange]) => (
-                  <tr key={periodNum}>
-                    <td className="period">
-                      Tiết {periodNum}
-                      <br />
-                      <span className="small">
-                        {timeRange[0]}–{timeRange[1]}
-                      </span>
-                    </td>
-                    {Array.from({ length: 7 }, (_, dow) => {
-                      const dayKey = (dow + 1).toString();
-                      const events = periodEvents[periodNum]?.[dayKey] || [];
-                      return (
-                        <td key={dow}>
-                          {events.map((event) =>
-                            formatEvent(event, subjectColors)
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </main>
-      </div>
-    </>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
   );
 }

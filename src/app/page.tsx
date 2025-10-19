@@ -1,14 +1,6 @@
-import Head from 'next/head';
-
 export default function Home() {
   return (
     <>
-      <Head>
-        <title>HieuK | Portfolio</title>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-
       <div className="container">
         <header className="profile">
           <div className="profile-image">
@@ -23,10 +15,20 @@ export default function Home() {
           <h1>HieuK</h1>
           <p className="subtitle">🎮 IT Student & Freelance Editor 🌙</p>
           <div className="social-links">
-            <a href="mailto:main@hieuk.id.vn" className="social-link" title="Email">
+            <a
+              href="mailto:main@hieuk.id.vn"
+              className="social-link"
+              title="Email"
+            >
               <i className="fas fa-envelope"></i>
             </a>
-            <a href="https://github.com/HieuKVN" target="_blank" rel="noopener noreferrer" className="social-link" title="GitHub">
+            <a
+              href="https://github.com/HieuKVN"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-link"
+              title="GitHub"
+            >
               <i className="fab fa-github"></i>
             </a>
           </div>
@@ -35,12 +37,15 @@ export default function Home() {
         <main>
           {/* About Me */}
           <section id="about" className="section">
-            <h2><i className="fas fa-user"></i> About Me</h2>
+            <h2>
+              <i className="fas fa-user"></i> About Me
+            </h2>
             <div className="content-card">
               <p>
-                Hi! I'm <b>HieuK</b>, an <b>IT student at HUSC University</b> 🎓.
-                I balance <b>coding</b>, <b>video editing</b>, and <b>gaming</b> every day.
-                Currently working as a <b>Freelancer Audio Spectrum Editor</b> 🎬.
+                Hi! I'm <b>HieuK</b>, an <b>IT student at HUSC University</b>{" "}
+                🎓. I balance <b>coding</b>, <b>video editing</b>, and{" "}
+                <b>gaming</b> every day. Currently working as a{" "}
+                <b>Freelancer Audio Spectrum Editor</b> 🎬.
               </p>
               <div className="skills">
                 <span className="skill-tag">HTML</span>
@@ -57,7 +62,9 @@ export default function Home() {
 
           {/* Goals */}
           <section id="goals" className="section">
-            <h2><i className="fas fa-flag"></i> Current Quests</h2>
+            <h2>
+              <i className="fas fa-flag"></i> Current Quests
+            </h2>
             <div className="content-card goals-grid">
               <div className="goal-item">
                 <i className="fas fa-code"></i>
@@ -67,7 +74,9 @@ export default function Home() {
               <div className="goal-item">
                 <i className="fas fa-laptop-code"></i>
                 <h3>Build web apps</h3>
-                <p>Create meaningful applications that solve real problems 🚀</p>
+                <p>
+                  Create meaningful applications that solve real problems 🚀
+                </p>
               </div>
               <div className="goal-item">
                 <i className="fas fa-rocket"></i>
@@ -84,13 +93,20 @@ export default function Home() {
 
           {/* Contact */}
           <section id="contact" className="section">
-            <h2><i className="fas fa-envelope"></i> Get in Touch</h2>
+            <h2>
+              <i className="fas fa-envelope"></i> Get in Touch
+            </h2>
             <div className="content-card contact-grid">
               <a href="mailto:main@hieuk.id.vn" className="contact-item">
                 <i className="fas fa-envelope"></i>
                 <span>main@hieuk.id.vn</span>
               </a>
-              <a href="https://github.com/HieuKVN" target="_blank" rel="noopener noreferrer" className="contact-item">
+              <a
+                href="https://github.com/HieuKVN"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-item"
+              >
                 <i className="fab fa-github"></i>
                 <span>github.com/HieuKVN</span>
               </a>

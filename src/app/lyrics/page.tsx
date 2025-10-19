@@ -1,6 +1,5 @@
 'use client';
 
-import Head from 'next/head';
 import { useState } from 'react';
 
 export default function Lyrics() {
@@ -35,14 +34,7 @@ export default function Lyrics() {
   };
 
   return (
-    <>
-      <Head>
-        <title>Ai Vậy - Lyrics Tool</title>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </Head>
-
-      <div className="container">
+    <div className="container">
         <header className="profile">
           <h1>Lyrics Tool</h1>
           <p className="subtitle">Process Vietnamese song lyrics</p>
@@ -64,6 +56,5 @@ export default function Lyrics() {
           </div>
         </main>
       </div>
-    </>
   );
 }
